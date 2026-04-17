@@ -2,120 +2,87 @@
 <html lang="pt">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>GD Improved</title>
+<title>Dino Run</title>
 
 <style>
 body {
   margin: 0;
   overflow: hidden;
-  background: #05050a;
-  touch-action: none;
+  background: #f7f7f7;
+  font-family: Arial;
 }
 
-/* fundo com camadas */
-#bg {
+#game {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  background: white;
+  border-bottom: 3px solid #333;
+}
+
+/* dinossauro */
+#dino {
+  width: 40px;
+  height: 40px;
+  background: black;
   position: absolute;
+  bottom: 50px;
+  left: 80px;
+}
+
+/* cacto */
+.obstacle {
+  width: 20px;
+  height: 40px;
+  background: green;
+  position: absolute;
+  bottom: 50px;
+  right: -20px;
+}
+
+/* chão */
+.ground {
+  position: absolute;
+  bottom: 50px;
   width: 100%;
-  height: 100%;
-  background: radial-gradient(circle at top, #1a1a3a, #000);
-}
-
-/* chão estilo bloco */
-#ground {
-  position: absolute;
-  bottom: 15vh;
-  width: 200%;
-  height: 10vh;
-  background: repeating-linear-gradient(
-    90deg,
-    #222 0px,
-    #222 20px,
-    #111 20px,
-    #111 40px
-  );
-  border-top: 3px solid #333;
-}
-
-/* player mais “GD style” */
-#player {
-  width: 6vh;
-  height: 6vh;
-  position: absolute;
-  left: 10vw;
-  bottom: 20vh;
-
-  background: linear-gradient(45deg, #00ffd5, #0066ff);
-  box-shadow: 0 0 25px #00ffd5;
-
-  border-radius: 10px;
-  transform: rotate(0deg);
-}
-
-/* spike melhorado */
-.spike {
-  width: 0;
-  height: 0;
-  border-left: 2.5vh solid transparent;
-  border-right: 2.5vh solid transparent;
-  border-bottom: 6vh solid #ff2b2b;
-
-  position: absolute;
-  bottom: 15vh;
-
-  filter: drop-shadow(0 0 10px red);
-}
-
-/* glow overlay */
-.glow {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(circle at center, transparent, rgba(0,255,255,0.05));
-  pointer-events: none;
+  height: 2px;
+  background: #333;
 }
 
 #score {
   position: absolute;
-  top: 2vh;
-  left: 3vw;
-  color: white;
-  font-size: 2vh;
-  font-family: Arial;
+  top: 20px;
+  left: 20px;
 }
 </style>
 </head>
 
 <body>
 
-<div id="bg"></div>
-<div id="ground"></div>
-<div id="player"></div>
-<div class="glow"></div>
-<div id="score">Score: 0</div>
+<div id="game">
+  <div id="score">Score: 0</div>
+  <div id="dino"></div>
+  <div class="ground"></div>
+</div>
 
 <script>
 
-const player = document.getElementById("player");
+const dino = document.getElementById("dino");
+const game = document.getElementById("game");
 
-let y = 20;
-let vel = 0;
-let gravity = 0.7;
-let jumpPower = 12;
-let jumping = false;
-
-let angle = 0;
+let isJumping = false;
+let velocity = 0;
+let gravity = 0.8;
+let posY = 50;
 
 let score = 0;
 let gameOver = false;
 
-let spikes = [];
-
 /* pulo */
 function jump() {
-  if (jumping) return;
-  vel = jumpPower;
-  jumping = true;
+  if (isJumping) return;
+  velocity = 12;
+  isJumping = true;
 }
 
 document.addEventListener("keydown", e => {
@@ -124,57 +91,58 @@ document.addEventListener("keydown", e => {
 
 document.addEventListener("touchstart", jump);
 
-/* física player */
-function updatePlayer() {
-  vel -= gravity;
-  y += vel;
+/* física */
+function updateDino() {
+  velocity -= gravity;
+  posY += velocity;
 
-  if (y <= 20) {
-    y = 20;
-    vel = 0;
-    jumping = false;
+  if (posY <= 50) {
+    posY = 50;
+    isJumping = false;
+    velocity = 0;
   }
 
-  /* rotação estilo GD */
-  angle += 6;
-  player.style.transform = `rotate(${angle}deg)`;
-
-  player.style.bottom = y + "vh";
+  dino.style.bottom = posY + "px";
 }
 
-/* spike bonito */
-function createSpike(x) {
-  const spike = document.createElement("div");
-  spike.classList.add("spike");
-  spike.style.left = x + "vw";
-  document.body.appendChild(spike);
-
-  spikes.push({ el: spike, x: x });
-}
-
-/* mapa */
-for (let i = 50; i < 300; i += 15) {
-  createSpike(i);
-}
-
-/* mundo */
-function updateWorld() {
+/* obstáculo */
+function createObstacle() {
   if (gameOver) return;
 
-  score++;
-  document.getElementById("score").innerText = "Score: " + score;
+  const obs = document.createElement("div");
+  obs.classList.add("obstacle");
+  game.appendChild(obs);
 
-  spikes.forEach(s => {
-    s.x -= 0.5;
-    s.el.style.left = s.x + "vw";
+  let right = -20;
 
-    if (s.x < 18 && s.x > 10 && y < 26) {
+  function move() {
+    if (gameOver) return;
+
+    right += 6;
+    obs.style.right = right + "px";
+
+    // colisão simples
+    if (right > window.innerWidth - 120 && right < window.innerWidth - 80 && posY < 80) {
       endGame();
     }
-  });
+
+    if (right > window.innerWidth + 50) {
+      obs.remove();
+    }
+  }
+
+  setInterval(move, 20);
 }
 
-/* game over */
+/* score */
+function updateScore() {
+  if (!gameOver) {
+    score++;
+    document.getElementById("score").innerText = "Score: " + score;
+  }
+}
+
+/* fim */
 function endGame() {
   gameOver = true;
   alert("💀 Game Over! Score: " + score);
@@ -182,8 +150,9 @@ function endGame() {
 }
 
 /* loops */
-setInterval(updatePlayer, 16);
-setInterval(updateWorld, 16);
+setInterval(updateDino, 16);
+setInterval(createObstacle, 1500);
+setInterval(updateScore, 100);
 
 </script>
 
