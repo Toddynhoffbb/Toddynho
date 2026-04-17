@@ -2,147 +2,80 @@
 <html lang="pt">
 <head>
 <meta charset="UTF-8">
-<title>Brainrot Simulator</title>
+<title>Login</title>
 
 <style>
 body {
   margin: 0;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: radial-gradient(circle, #2b0000, #0a0000);
   font-family: Arial;
-  background: radial-gradient(circle, #1b1f3a, #0b0d16);
   color: white;
 }
 
-/* TOP BAR estilo Roblox */
-.topbar {
-  background: #111428;
-  padding: 15px;
-  font-size: 20px;
-  font-weight: bold;
-  color: #00ffd5;
-  box-shadow: 0 0 10px black;
-}
-
-.container {
-  padding: 20px;
-  max-width: 600px;
-  margin: auto;
-}
-
-.card {
-  background: #161a2f;
-  padding: 15px;
+.box {
+  background: #1a0000;
+  padding: 30px;
   border-radius: 12px;
-  box-shadow: 0 0 10px rgba(0,255,213,0.2);
-  margin-top: 15px;
+  width: 300px;
+  box-shadow: 0 0 20px red;
+}
+
+h2 {
+  text-align: center;
+  color: #ff2b2b;
 }
 
 input {
   width: 100%;
   padding: 10px;
-  margin-top: 5px;
-  border-radius: 8px;
+  margin-top: 8px;
+  margin-bottom: 15px;
   border: none;
-  outline: none;
-}
-
-.traits {
-  margin-top: 10px;
-}
-
-.traits label {
-  display: block;
-  background: #1f2442;
-  padding: 8px;
-  margin-top: 6px;
   border-radius: 8px;
-  cursor: pointer;
+  outline: none;
+  background: #2a0000;
+  color: white;
 }
 
 button {
   width: 100%;
-  padding: 12px;
-  margin-top: 15px;
+  padding: 10px;
   border: none;
-  border-radius: 10px;
-  background: #00ffd5;
-  color: black;
+  border-radius: 8px;
+  background: red;
+  color: white;
   font-weight: bold;
   cursor: pointer;
   transition: 0.2s;
 }
 
 button:hover {
-  background: #00c7a8;
+  background: darkred;
 }
 
-.result {
-  margin-top: 15px;
-  background: #11152a;
-  padding: 15px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0,255,213,0.1);
+label {
+  font-size: 14px;
 }
 </style>
 </head>
 
 <body>
 
-<div class="topbar">
-🧠 Brainrot Simulator
+<div class="box">
+  <h2>🔴 LOGIN</h2>
+
+  <label>Username</label>
+  <input type="text" placeholder="Insira texto">
+
+  <label>Password</label>
+  <input type="password" placeholder="Insira texto">
+
+  <button>ENTRAR</button>
 </div>
-
-<div class="container">
-
-<div class="card">
-  <h3>Nome do Brainrot</h3>
-  <input type="text" id="name" placeholder="Ex: Shadow Brain">
-</div>
-
-<div class="card">
-  <h3>Traits</h3>
-
-  <div class="traits">
-    <label><input type="checkbox" value="5"> Speed +5</label>
-    <label><input type="checkbox" value="10"> Power +10</label>
-    <label><input type="checkbox" value="20"> Diamond +20</label>
-    <label><input type="checkbox" value="50"> OG Boost +50</label>
-  </div>
-
-  <button onclick="calcular()">CALCULAR 💰</button>
-</div>
-
-<div id="resultado"></div>
-
-</div>
-
-<script>
-
-function calcular() {
-
-  const nome = document.getElementById("name").value || "Sem nome";
-
-  const checks = document.querySelectorAll("input[type='checkbox']");
-
-  let bonus = 0;
-
-  checks.forEach(c => {
-    if (c.checked) bonus += Number(c.value);
-  });
-
-  const base = 10;
-  const total = base + bonus;
-
-  document.getElementById("resultado").innerHTML = `
-    <div class="result">
-      <h2>🧠 ${nome}</h2>
-      <p>💵 Base: ${base} coins/sec</p>
-      <p>⚡ Bonus Traits: +${bonus}</p>
-      <h2>💰 Total: ${total} coins/sec</h2>
-    </div>
-  `;
-}
-
-</script>
 
 </body>
 </html>
