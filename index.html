@@ -1,1 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<title>Brainrot Trait Counter</title>
 
+<style>
+body {
+  font-family: Arial;
+  background: #0f0f1a;
+  color: white;
+  padding: 20px;
+}
+
+h1 {
+  color: #00ffcc;
+}
+
+.card {
+  background: #1c1c2e;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 10px;
+  border: 1px solid #333;
+}
+
+.badge {
+  padding: 3px 8px;
+  border-radius: 5px;
+  font-size: 12px;
+}
+
+.OG { background: gold; color: black; }
+.SECRET { background: purple; }
+.NORMAL { background: gray; }
+
+.mutations {
+  color: #00ffcc;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🧠 Brainrot Trait Counter</h1>
+
+<div id="container"></div>
+
+<h2>📊 Contador de Traits</h2>
+<p id="count"></p>
+
+<script>
+
+// 🔥 Dados (só SECRET e OG entram)
+const brainrots = [
+  {
+    nome: "Ancient Brain King",
+    classe: "OG",
+    traits: 5,
+    mutacao: "Diamond"
+  },
+  {
+    nome: "Hidden Portal Brain",
+    classe: "SECRET",
+    traits: 3,
+    mutacao: "Normal"
+  },
+  {
+    nome: "Basic Brain",
+    classe: "NORMAL",
+    traits: 10,
+    mutacao: "Normal"
+  }
+];
+
+// ❗ filtro: só SECRET e OG
+const validos = brainrots.filter(b => 
+  b.classe === "OG" || b.classe === "SECRET"
+);
+
+const container = document.getElementById("container");
+
+let totalTraits = 0;
+
+// render
+validos.forEach(b => {
+
+  totalTraits += b.traits;
+
+  const div = document.createElement("div");
+  div.className = "card";
+
+  div.innerHTML = `
+    <h2>${b.nome}</h2>
+    <span class="badge ${b.classe}">${b.classe}</span>
+    <p>💠 Traits: ${b.traits}</p>
+    <p class="mutations">💎 Mutação: ${b.mutacao}</p>
+  `;
+
+  container.appendChild(div);
+});
+
+// contador final
+document.getElementById("count").innerText =
+  "Total de Traits (SECRET + OG): " + totalTraits;
+
+</script>
+
+</body>
+</html>
