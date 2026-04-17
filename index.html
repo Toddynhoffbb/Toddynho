@@ -2,107 +2,145 @@
 <html lang="pt">
 <head>
 <meta charset="UTF-8">
-<title>Brainrot Trait Counter</title>
+<title>Brainrot Simulator</title>
 
 <style>
 body {
+  margin: 0;
   font-family: Arial;
-  background: #0f0f1a;
+  background: radial-gradient(circle, #1b1f3a, #0b0d16);
   color: white;
-  padding: 20px;
 }
 
-h1 {
-  color: #00ffcc;
+/* TOP BAR estilo Roblox */
+.topbar {
+  background: #111428;
+  padding: 15px;
+  font-size: 20px;
+  font-weight: bold;
+  color: #00ffd5;
+  box-shadow: 0 0 10px black;
+}
+
+.container {
+  padding: 20px;
+  max-width: 600px;
+  margin: auto;
 }
 
 .card {
-  background: #1c1c2e;
+  background: #161a2f;
+  padding: 15px;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0,255,213,0.2);
+  margin-top: 15px;
+}
+
+input {
+  width: 100%;
   padding: 10px;
-  margin: 10px 0;
+  margin-top: 5px;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+}
+
+.traits {
+  margin-top: 10px;
+}
+
+.traits label {
+  display: block;
+  background: #1f2442;
+  padding: 8px;
+  margin-top: 6px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 15px;
+  border: none;
   border-radius: 10px;
-  border: 1px solid #333;
+  background: #00ffd5;
+  color: black;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
 }
 
-.badge {
-  padding: 3px 8px;
-  border-radius: 5px;
-  font-size: 12px;
+button:hover {
+  background: #00c7a8;
 }
 
-.OG { background: gold; color: black; }
-.SECRET { background: purple; }
-.NORMAL { background: gray; }
-
-.mutations {
-  color: #00ffcc;
+.result {
+  margin-top: 15px;
+  background: #11152a;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,255,213,0.1);
 }
 </style>
 </head>
 
 <body>
 
-<h1>🧠 Brainrot Trait Counter</h1>
+<div class="topbar">
+🧠 Brainrot Simulator
+</div>
 
-<div id="container"></div>
+<div class="container">
 
-<h2>📊 Contador de Traits</h2>
-<p id="count"></p>
+<div class="card">
+  <h3>Nome do Brainrot</h3>
+  <input type="text" id="name" placeholder="Ex: Shadow Brain">
+</div>
+
+<div class="card">
+  <h3>Traits</h3>
+
+  <div class="traits">
+    <label><input type="checkbox" value="5"> Speed +5</label>
+    <label><input type="checkbox" value="10"> Power +10</label>
+    <label><input type="checkbox" value="20"> Diamond +20</label>
+    <label><input type="checkbox" value="50"> OG Boost +50</label>
+  </div>
+
+  <button onclick="calcular()">CALCULAR 💰</button>
+</div>
+
+<div id="resultado"></div>
+
+</div>
 
 <script>
 
-// 🔥 Dados (só SECRET e OG entram)
-const brainrots = [
-  {
-    nome: "Ancient Brain King",
-    classe: "OG",
-    traits: 5,
-    mutacao: "Diamond"
-  },
-  {
-    nome: "Hidden Portal Brain",
-    classe: "SECRET",
-    traits: 3,
-    mutacao: "Normal"
-  },
-  {
-    nome: "Basic Brain",
-    classe: "NORMAL",
-    traits: 10,
-    mutacao: "Normal"
-  }
-];
+function calcular() {
 
-// ❗ filtro: só SECRET e OG
-const validos = brainrots.filter(b => 
-  b.classe === "OG" || b.classe === "SECRET"
-);
+  const nome = document.getElementById("name").value || "Sem nome";
 
-const container = document.getElementById("container");
+  const checks = document.querySelectorAll("input[type='checkbox']");
 
-let totalTraits = 0;
+  let bonus = 0;
 
-// render
-validos.forEach(b => {
+  checks.forEach(c => {
+    if (c.checked) bonus += Number(c.value);
+  });
 
-  totalTraits += b.traits;
+  const base = 10;
+  const total = base + bonus;
 
-  const div = document.createElement("div");
-  div.className = "card";
-
-  div.innerHTML = `
-    <h2>${b.nome}</h2>
-    <span class="badge ${b.classe}">${b.classe}</span>
-    <p>💠 Traits: ${b.traits}</p>
-    <p class="mutations">💎 Mutação: ${b.mutacao}</p>
+  document.getElementById("resultado").innerHTML = `
+    <div class="result">
+      <h2>🧠 ${nome}</h2>
+      <p>💵 Base: ${base} coins/sec</p>
+      <p>⚡ Bonus Traits: +${bonus}</p>
+      <h2>💰 Total: ${total} coins/sec</h2>
+    </div>
   `;
-
-  container.appendChild(div);
-});
-
-// contador final
-document.getElementById("count").innerText =
-  "Total de Traits (SECRET + OG): " + totalTraits;
+}
 
 </script>
 
