@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>GD Mobile</title>
+<title>GD Improved</title>
 
 <style>
 body {
@@ -11,89 +11,110 @@ body {
   overflow: hidden;
   background: #05050a;
   touch-action: none;
-  font-family: Arial;
 }
 
-/* tela do jogo */
-#game {
-  position: relative;
-  width: 100vw;
-  height: 100vh;
-  background: linear-gradient(#101020, #000);
+/* fundo com camadas */
+#bg {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at top, #1a1a3a, #000);
 }
 
-/* chão */
+/* chão estilo bloco */
 #ground {
   position: absolute;
   bottom: 15vh;
   width: 200%;
-  height: 4px;
-  background: #444;
+  height: 10vh;
+  background: repeating-linear-gradient(
+    90deg,
+    #222 0px,
+    #222 20px,
+    #111 20px,
+    #111 40px
+  );
+  border-top: 3px solid #333;
 }
 
-/* player (cube neon estilo GD) */
+/* player mais “GD style” */
 #player {
   width: 6vh;
   height: 6vh;
-  background: linear-gradient(45deg, #00ffd5, #0077ff);
   position: absolute;
   left: 10vw;
   bottom: 20vh;
-  border-radius: 6px;
-  box-shadow: 0 0 20px #00ffd5;
+
+  background: linear-gradient(45deg, #00ffd5, #0066ff);
+  box-shadow: 0 0 25px #00ffd5;
+
+  border-radius: 10px;
+  transform: rotate(0deg);
 }
 
-/* spikes */
+/* spike melhorado */
 .spike {
   width: 0;
   height: 0;
   border-left: 2.5vh solid transparent;
   border-right: 2.5vh solid transparent;
-  border-bottom: 5vh solid #ff2b2b;
+  border-bottom: 6vh solid #ff2b2b;
+
   position: absolute;
   bottom: 15vh;
-  filter: drop-shadow(0 0 8px red);
+
+  filter: drop-shadow(0 0 10px red);
 }
 
-/* score */
+/* glow overlay */
+.glow {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at center, transparent, rgba(0,255,255,0.05));
+  pointer-events: none;
+}
+
 #score {
   position: absolute;
-  top: 3vh;
+  top: 2vh;
   left: 3vw;
   color: white;
   font-size: 2vh;
+  font-family: Arial;
 }
 </style>
 </head>
 
 <body>
 
-<div id="game">
-  <div id="score">Score: 0</div>
-  <div id="player"></div>
-  <div id="ground"></div>
-</div>
+<div id="bg"></div>
+<div id="ground"></div>
+<div id="player"></div>
+<div class="glow"></div>
+<div id="score">Score: 0</div>
 
 <script>
 
 const player = document.getElementById("player");
-const game = document.getElementById("game");
 
 let y = 20;
-let velocity = 0;
+let vel = 0;
 let gravity = 0.7;
+let jumpPower = 12;
 let jumping = false;
 
-let speed = 6;
+let angle = 0;
+
 let score = 0;
 let gameOver = false;
 
 let spikes = [];
 
-/* pulo (TOQUE + SPACE) */
+/* pulo */
 function jump() {
   if (jumping) return;
-  velocity = 12;
+  vel = jumpPower;
   jumping = true;
 }
 
@@ -103,36 +124,40 @@ document.addEventListener("keydown", e => {
 
 document.addEventListener("touchstart", jump);
 
-/* física */
+/* física player */
 function updatePlayer() {
-  velocity -= gravity;
-  y += velocity;
+  vel -= gravity;
+  y += vel;
 
   if (y <= 20) {
     y = 20;
-    velocity = 0;
+    vel = 0;
     jumping = false;
   }
+
+  /* rotação estilo GD */
+  angle += 6;
+  player.style.transform = `rotate(${angle}deg)`;
 
   player.style.bottom = y + "vh";
 }
 
-/* criar spikes */
+/* spike bonito */
 function createSpike(x) {
   const spike = document.createElement("div");
   spike.classList.add("spike");
   spike.style.left = x + "vw";
-  game.appendChild(spike);
+  document.body.appendChild(spike);
 
   spikes.push({ el: spike, x: x });
 }
 
 /* mapa */
-for (let i = 60; i < 300; i += 20) {
+for (let i = 50; i < 300; i += 15) {
   createSpike(i);
 }
 
-/* loop do mundo */
+/* mundo */
 function updateWorld() {
   if (gameOver) return;
 
@@ -140,11 +165,10 @@ function updateWorld() {
   document.getElementById("score").innerText = "Score: " + score;
 
   spikes.forEach(s => {
-    s.x -= 0.6;
+    s.x -= 0.5;
     s.el.style.left = s.x + "vw";
 
-    // colisão simples adaptada mobile
-    if (s.x < 18 && s.x > 10 && y < 25) {
+    if (s.x < 18 && s.x > 10 && y < 26) {
       endGame();
     }
   });
